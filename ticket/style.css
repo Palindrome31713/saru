@@ -1,0 +1,426 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap");
+
+:root {
+	--color-primary: #9fa8da;
+	--color-secondary: #3949ab;
+	--color-tertiary: #5c6bc0;
+	--color-bg: #263238;
+	--font-heading: Arial, helvetica;
+	--font-body: "open sans", "Roboto", sans-serif;
+	--font-misc: "Oswald", "monospace", "courier";
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	backface-visibility: hidden;
+}
+
+body {
+	background-color: var(--color-bg);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	min-height: 100vh;
+	padding: 20px;
+}
+h3,
+h4 {
+	font-family: var(--font-heading);
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.ticket {
+	background-color: var(--color-primary);
+	color: var(--color-secondary);
+	width: 600px;
+	height: auto;
+	display: grid;
+	grid-template-columns: 106px calc(100% - 106px);
+	font-family: var(--font-body);
+}
+.ticket-sub {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	text-align: center;
+	padding: 10px 10px;
+	border-right: 6px dotted var(--color-bg);
+	position: relative;
+	z-index: 1;
+}
+.ticket-sub::before,
+.ticket-sub::after {
+	background-color: var(--color-bg);
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	content: "";
+	position: absolute;
+	z-index: 2;
+	top: -14px;
+	right: -14px;
+}
+.ticket-sub::after {
+	top: unset;
+	bottom: -14px;
+}
+.ticket-sub h3 {
+	font-size: 30px;
+	padding: 10px 8px 10px 4px;
+	background: var(--color-tertiary);
+	color: white;
+}
+.ticket-sub h3::before,
+.ticket-sub h3::after {
+	background-color: var(--color-bg);
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	content: "";
+	position: absolute;
+	z-index: 2;
+	top: -18px;
+	left: -22px;
+}
+.ticket-sub h3::after {
+	top: unset;
+	bottom: -18px;
+}
+.ticket-sub p {
+	font-size: 18px;
+	letter-spacing: 8px;
+	font-weight: 500;
+	padding: 14px 4px 14px 0;
+	text-align: center;
+}
+.ticket-sub p::before {
+	content: "";
+	width: 2px;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	right: calc(100% - 3px);
+	border-right: dotted 5px var(--color-bg);
+}
+.ticket-sub p::after {
+	content: "";
+	width: calc(100% - 20px);
+	height: calc(100% - 20px);
+	box-shadow: inset 0 0 0 2px var(--color-secondary);
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+.ticket-main {
+	padding: 10px;
+	display: grid;
+	grid-template-columns: 23% 77%;
+}
+.ticket-seat {
+	display: grid;
+	grid-template-areas:
+		"suba head"
+		"subb head"
+		"subc head";
+	box-shadow: inset 0 0 0 2px var(--color-secondary);
+}
+.ticket-seat > h3 {
+	grid-area: head;
+	height: 100%;
+	writing-mode: vertical-rl;
+	text-orientation: sideways;
+	padding: 12px 10px 12px 2px;
+	background-color: var(--color-tertiary);
+	color: white;
+	position: relative;
+	z-index: 1;
+	padding-bottom: 80px;
+	border-top: 2px solid var(--color-secondary);
+	border-bottom: 2px solid var(--color-secondary);
+}
+.ticket-seat > h3 span {
+	position: absolute;
+	bottom: 0;
+	right: calc(50% + 1px);
+	width: 100%;
+	color: white;
+	padding: 10px 4px;
+	font-size: 1.6em;
+	z-index: 2;
+	transform: translateX(50%);
+}
+.ticket-seat > .ticket-seat-box:nth-of-type(1) {
+	grid-area: suba;
+}
+.ticket-seat > .ticket-seat-box:nth-of-type(2) {
+	grid-area: subb;
+}
+.ticket-seat > .ticket-seat-box:nth-of-type(3) {
+	grid-area: subc;
+}
+.ticket-seat > .ticket-seat-box {
+	writing-mode: vertical-rl;
+	text-orientation: sideways;
+	text-align: center;
+}
+.ticket-seat > .ticket-seat-box:not(:last-child) {
+	border-bottom: 2px solid var(--color-secondary);
+}
+.ticket-seat > .ticket-seat-box p {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 14px;
+	padding-right: 4px;
+}
+.ticket-seat > .ticket-seat-box h4 {
+	font-weight: 1000;
+	font-size: 32px;
+	line-height: 32px;
+	padding-top: 6px;
+}
+
+.ticket-info {
+	padding=left: 10px;
+	text-align: center;
+	display: grid;
+	grid-template-areas:
+		"brand"
+		"brawler"
+		"referee"
+		"date"
+		"misc";
+	box-shadow: inset 0 0 0 2px var(--color-secondary);
+}
+.ticket-info > div:not(:nth-last-child(-n + 2)) {
+	border-bottom: 2px dashed var(--color-secondary);
+}
+.ticket-info .ticket-info-brand {
+	grid-area: brand;
+	/* 	height: 50px;
+	line-height: 50px; */
+	align-self: center;
+	padding: 0 10px 8px;
+	font-size: 26px;
+	border-bottom: 2px dashed var(--color-secondary);
+}
+.ticket-info .ticket-info-brawler {
+	grid-area: brawler;
+	display: flex;
+	/* 	align-items: center; */
+	width: 100%;
+	margin-top: -11px;
+}
+.ticket-info .ticket-info-brawler .separator {
+	writing-mode: vertical-lr;
+	text-orientation: upright;
+	font-weight: 1000;
+	width: 40px;
+	padding: 0 calc(20px - 0.8em);
+	text-align: center;
+	font-family: var(--font-heading);
+	border-left: 2px dashed var(--color-secondary);
+	border-right: 2px dashed var(--color-secondary);
+}
+.ticket-info .ticket-info-brawler .brawler {
+	width: calc(50% - 20px);
+	flex: 0 0 auto;
+	align-self: center;
+}
+.ticket-info .ticket-info-brawler .brawler span {
+	display: block;
+	font-size: 16px;
+	font-family: var(--font-misc);
+	font-weight: bold;
+	letter-spacing: 2px;
+}
+.ticket-info .ticket-info-brawler .brawler span:last-child {
+	font-size: 32px;
+	text-transform: uppercase;
+	margin-top: -8px;
+}
+.ticket-info .ticket-info-referee {
+	grid-area: referee;
+	align-self: center;
+	padding: 2px 8px 12px;
+}
+.ticket-info .ticket-info-referee span {
+	font-size: 16px;
+}
+.ticket-info .ticket-info-referee span:last-child {
+	font-size: 20px;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding-left: 10px;
+	font-family: var(--font-misc);
+}
+.ticket-info .ticket-info-date {
+	grid-area: date;
+	font-size: 22px;
+	line-height: 12px;
+	padding: 24px 10px 2px;
+	font-family: var(--font-heading);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+	background-color: var(--color-tertiary);
+	color: white;
+	margin-top: -12px;
+	border-left: 2px solid var(--color-secondary);
+	border-right: 2px solid var(--color-secondary);
+}
+.ticket-info .ticket-info-misc {
+	grid-area: misc;
+	font-size: 10px;
+	align-self: center;
+	font-weight: 400;
+	font-family: var(--font-heading);
+	letter-spacing: 6px;
+}
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap");
+
+:root {
+  /* Cleaner Gradient: White edges with a soft pink center */
+  --color-bg: linear-gradient(90deg, #ffffff 0%, #fce4ec 50%, #ffffff 100%);
+  --color-ticket: #ffffff;
+  --color-text: #ad1457;
+  --color-accent: #f06292;
+  --font-heading: Arial, helvetica;
+}
+
+body {
+  background: var(--color-bg);
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.ticket-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 80px;
+  padding: 40px;
+}
+
+.ticket {
+  background-color: var(--color-ticket);
+  color: var(--color-text);
+  width: 550px;
+  display: grid;
+  grid-template-columns: 106px calc(100% - 106px);
+  cursor: pointer;
+  position: relative;
+  /* Soft Initial Glow */
+  box-shadow: 0 10px 30px rgba(240, 98, 146, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* THE GLOW EFFECT */
+.ticket:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(240, 98, 146, 0.4);
+}
+
+/* REMOVING THE DARK DOTS */
+/* We change the background of the cutout circles to match the pink theme */
+.ticket-sub::before,
+.ticket-sub::after,
+.ticket-sub h3::before,
+.ticket-sub h3::after {
+  background-color: #fce4ec !important; /* Matches the background so they look like cutouts, not dots */
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  content: "";
+  position: absolute;
+  z-index: 2;
+}
+
+.ticket-sub {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-align: center;
+  padding: 10px;
+  /* Thinner, lighter dotted line */
+  border-right: 3px dotted #f8bbd0; 
+  position: relative;
+}
+
+/* Fixes for internal ticket colors */
+.ticket-sub h3 { background: var(--color-accent); color: white; padding: 15px 5px; }
+.ticket-seat > h3 { background-color: var(--color-accent); color: white; }
+.ticket-info .ticket-info-date { background-color: var(--color-accent); color: white; border: none; }
+
+/* Okieee Popup Glow */
+#popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 30px 70px;
+  border-radius: 50px;
+  font-family: var(--font-heading);
+  font-size: 38px;
+  font-weight: bold;
+  color: var(--color-accent);
+  display: none;
+  z-index: 1000;
+  box-shadow: 0 0 40px rgba(240, 98, 146, 0.5);
+  border: 4px solid #fce4ec;
+}
+.next-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 15px 40px;
+  
+  /* Text Style */
+  font-family: 'Arial', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  
+  /* Button Style */
+  background: linear-gradient(45deg, #ff69b4, #ff1493);
+  border-radius: 50px;
+  z-index: 9999; /* Ensures it is above everything else */
+  
+  /* Shadow & Glow */
+  box-shadow: 0 0 10px rgba(255, 20, 147, 0.4);
+  transition: all 0.3s ease;
+  
+  /* The Glowing Animation */
+  animation: button-glow 2s infinite;
+}
+
+.next-btn:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, #ff1493, #ff69b4);
+  box-shadow: 0 0 20px rgba(255, 20, 147, 0.8);
+}
+
+/* This makes the button "pulse" with light so it's easily seen */
+@keyframes button-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 20, 147, 0.9), 0 0 40px rgba(255, 105, 180, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+  }
+}

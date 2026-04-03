@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine for Annu 💘</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+      background-size: 400% 400%;
+      animation: bgMove 12s ease infinite;
+      font-family: "Poppins", sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Floating Hearts Background */
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      animation: floatUp linear forwards;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to { transform: translateY(-120vh) scale(1.8); opacity: 0; }
+    }
+
+    /* Main Card */
+    .card {
+      width: min(92%, 420px);
+      padding: 45px 30px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(18px);
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 10;
+    }
+    .card::before {
+      content: ""; position: absolute; inset: -2px; border-radius: 30px;
+      background: linear-gradient(120deg, #ff4d6d, #ff9a9e, #fbc2eb);
+      z-index: -1; filter: blur(20px); opacity: 0.8;
+    }
+
+    .emoji { font-size: 68px; margin-bottom: 12px; display: block; animation: heartbeat 1.8s infinite; }
+    @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+    .buttons { position: relative; height: 80px; margin-top: 20px; }
+    button { position: absolute; padding: 14px 38px; border-radius: 40px; border: none; font-size: 16px; cursor: pointer; }
+    #yes { left: 10%; background: linear-gradient(135deg, #ff4d6d, #ff758f); color: #fff; }
+    #no { left: 55%; background: rgba(255,255,255,0.9); color: #777; transition: 0.2s ease; }
+
+    /* Cat Popup (1 sec, single instance) */
+    .popup-cat {
+      position: fixed; width: 150px; pointer-events: none; z-index: 1000;
+      animation: catFlash 1s forwards ease-in-out;
+    }
+    @keyframes catFlash {
+      0% { transform: scale(0); opacity: 0; }
+      20% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(0.5); opacity: 0; }
+    }
+
+    /* Gift Selection */
+    #giftSection { display: none; flex-direction: column; align-items: center; position: absolute; width: 100%; top: 50%; transform: translateY(-50%); z-index: 20; }
+    .gift-img { width: 200px; cursor: pointer; transition: 0.3s; }
+    .gift-img:hover { transform: scale(1.1); }
+
+    /* New Image-Based Envelope & Letter Animation */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(15px); display: none; align-items: center;
+      justify-content: center; z-index: 100;
+    }
+
+    .envelope-container {
+      position: relative;
+      width: 400px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .envelope-img {
+      width: 100%;
+      z-index: 10;
+      position: relative;
+    }
+
+    .letter-paper {
+      position: absolute;
+      width: 90%;
+      background: url('paper.png') no-repeat center center;
+      background-size: cover;
+      bottom: 20px; /* Hidden behind envelope */
+      padding: 40px;
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+      min-height: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+      color: #333;
+      font-family: 'Dancing Script', cursive;
+      font-size: 20px;
+    }
+
+    .envelope-container.active .letter-paper {
+      transform: translateY(-400px); /* Slides up from behind */
+    }
+
+    .return-btn {
+      position: fixed; bottom: 30px; left: 30px; width: 55px; height: 55px;
+      background: #ff4d6d; color: white; border: none; border-radius: 50%; font-size: 26px; cursor: pointer; z-index: 110;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hearts-container"></div>
+
+  <div class="card" id="proposalCard">
+    <div class="emoji">💗🎀</div>
+    <h2 style="font-family:'Playfair Display'; color:#4a1c2f;">Annu, will you be my Valentine?</h2>
+    <div class="buttons">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙈</button>
+    </div>
+  </div>
+
+  <div id="giftSection">
+    <h1 style="color:white; margin-bottom:40px; font-family:'Playfair Display';">Pick a gift, Annu! 🎁</h1>
+    <div style="display:flex; gap:20px;">
+      <img src="gift.png" class="gift-img" onclick="showLetter()">
+      <img src="gift.png" class="gift-img" onclick="showLetter()">
+      <img src="gift.png" class="gift-img" onclick="showLetter()">
+    </div>
+  </div>
+
+  <div class="overlay" id="letterOverlay">
+    <div class="envelope-container" id="envContainer">
+      <div class="letter-paper">
+        <br>
+        Thank you for trusting what we have, even when it lives across cities and time zones.<br><br>
+        I promise I'll keep choosing you on the good days, the boring days, and especially when distance feels unfair.<br><br>
+        So here's me, officially yours, smiling at a screen and feeling closer to you than ever. ❤️
+      </div>
+      <img src="envelope.png" class="envelope-img">
+    </div>
+    <button class="return-btn" onclick="closeLetter()">↩</button>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const card = document.getElementById("proposalCard");
+    const giftSection = document.getElementById("giftSection");
+    let activeCat = null;
+
+    // Cat logic: 1 second, one at a time
+    noBtn.addEventListener("mouseenter", (e) => {
+      if (activeCat) activeCat.remove();
+      const cat = document.createElement("img");
+      cat.src = "cat.png";
+      cat.className = "popup-cat";
+      cat.style.left = (e.clientX - 75) + "px";
+      cat.style.top = (e.clientY - 75) + "px";
+      document.body.appendChild(cat);
+      activeCat = cat;
+      setTimeout(() => { if(activeCat === cat) { cat.remove(); activeCat = null; } }, 1000);
+
+      const cardRect = card.getBoundingClientRect();
+      noBtn.style.left = Math.random() * (cardRect.width - 120) + "px";
+      noBtn.style.top = Math.random() * (cardRect.height - 60) + "px";
+    });
+
+    yesBtn.addEventListener("click", () => {
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+      setTimeout(() => {
+        card.style.display = "none";
+        giftSection.style.display = "flex";
+      }, 600);
+    });
+
+    function showLetter() {
+      document.getElementById("letterOverlay").style.display = "flex";
+      setTimeout(() => {
+        document.getElementById("envContainer").classList.add("active");
+      }, 300);
+    }
+
+    function closeLetter() {
+      document.getElementById("envContainer").classList.remove("active");
+      setTimeout(() => {
+        document.getElementById("letterOverlay").style.display = "none";
+      }, 800);
+    }
+
+    // Heart Background
+    function createHeart() {
+      const container = document.getElementById("hearts-container");
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerHTML = Math.random() > 0.5 ? "❤️" : "💗";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = Math.random() * 20 + 15 + "px";
+      heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+      container.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    }
+    setInterval(createHeart, 450);
+  </script>
+</body>
+</html>

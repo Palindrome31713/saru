@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happie Birthdayyyy !💘</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+      background-size: 400% 400%;
+      animation: bgMove 12s ease infinite;
+      font-family: "Poppins", sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Glowing Glassmorphism Card */
+    .card {
+      width: min(92%, 420px);
+      padding: 45px 30px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(18px);
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      position: relative;
+      z-index: 10;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 30px;
+      background: linear-gradient(120deg, #ff4d6d, #ff9a9e, #fbc2eb);
+      z-index: -1;
+      filter: blur(20px);
+      opacity: 0.8;
+    }
+
+    .emoji {
+      font-size: 68px;
+      margin-bottom: 12px;
+      display: block;
+      animation: heartbeat 1.8s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    h2 {
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      color: #4a1c2f;
+      margin-bottom: 35px;
+    }
+
+    .buttons { position: relative; height: 80px; }
+    
+    button {
+      position: absolute;
+      padding: 14px 38px;
+      border-radius: 40px;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    #yes {
+      left: 10%;
+      background: linear-gradient(135deg, #ff4d6d, #ff758f);
+      color: #fff;
+      box-shadow: 0 15px 35px rgba(255,77,109,0.5);
+    }
+
+    #no { left: 55%; background: rgba(255,255,255,0.9); color: #777; transition: 0.2s ease; }
+
+    /* Floating Hearts Background */
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      animation: floatUp linear forwards;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to { transform: translateY(-120vh) scale(1.8); opacity: 0; }
+    }
+
+    /* Cat Popup Styling (1 sec) */
+    .popup-cat {
+      position: fixed;
+      width: 150px;
+      pointer-events: none;
+      z-index: 1000;
+      animation: catFlash 1s forwards ease-in-out;
+    }
+
+    @keyframes catFlash {
+      0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+      20% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+      80% { transform: scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: scale(0.5) opacity: 0; }
+    }
+
+    /* Gift Section */
+    #giftSection {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+    }
+
+    /* First gift has pointer cursor, others are default */
+    .gift-img { width: 250px; transition: 0.4s; }
+    .clickable-gift { cursor: pointer; }
+    .gift-img:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <div id="hearts-container"></div>
+
+  <div class="card" id="proposalCard">
+    <div class="emoji">✨🎀</div>
+    <h2>Sarmadiiiii,<br>Areee Youuu Fuckingggg Excitedddd ????</h2>
+    <div class="buttons">
+      <button id="yes">Yes 😭</button>
+      <button id="no">No 🙄</button>
+    </div>
+  </div>
+
+  <div id="giftSection">
+    <h1 style="color:white; margin-bottom:40px; font-family:'Playfair Display';">Open it, Birthdayyy Gurlll! 🎁</h1>
+    <div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center;">
+      <img src="gift.png" class="gift-img clickable-gift" onclick="window.location.href='flower/index.html'">
+      
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const card = document.getElementById("proposalCard");
+    const giftSection = document.getElementById("giftSection");
+    const container = document.getElementById("hearts-container");
+
+    let activeCat = null; 
+
+    noBtn.addEventListener("mouseenter", (e) => {
+      if (activeCat) {
+        activeCat.remove();
+        activeCat = null;
+      }
+
+      const cat = document.createElement("img");
+      cat.src = "cat.png"; 
+      cat.className = "popup-cat";
+      cat.style.left = (e.clientX - 75) + "px";
+      cat.style.top = (e.clientY - 75) + "px";
+      document.body.appendChild(cat);
+      activeCat = cat;
+
+      setTimeout(() => {
+        if (activeCat === cat) {
+          cat.remove();
+          activeCat = null;
+        }
+      }, 1000);
+
+      const cardRect = card.getBoundingClientRect();
+      noBtn.style.left = Math.random() * (cardRect.width - 110) + "px";
+      noBtn.style.top = Math.random() * (cardRect.height - 60) + "px";
+    });
+
+    yesBtn.addEventListener("click", () => {
+      confetti({ particleCount: 220, spread: 80, origin: { y: 0.6 } });
+      setTimeout(() => {
+        card.style.display = "none";
+        giftSection.style.display = "flex";
+      }, 800);
+    });
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerHTML = Math.random() > 0.5 ? "🎀" : "✨";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = Math.random() * 20 + 15 + "px";
+      heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+      container.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    }
+    setInterval(createHeart, 400);
+  </script>
+</body>
+
+</html>

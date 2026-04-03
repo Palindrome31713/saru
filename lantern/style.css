@@ -1,0 +1,26 @@
+.valentine-sky {
+    background: #1a1a2e; /* Deep dark blue */
+    border-radius: 20px;
+    height: 350px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-bottom: 20px;
+    border: 2px solid #fa94be; /* Soft pink border to match your site */
+}
+
+.lantern {
+    width: 45px;
+    height: 60px;
+    background: #fa94be; /* Matches your 'btn-pink' class */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(250, 148, 190, 0.5);
+    cursor: pointer;
+    animation: float 3s ease-in-out infinite;
+}
+
+.lantern:hover {
+    background: #b537f2; /* Matches your 'Theme Purple' */
+    box-shadow: 0 0 25px rgba(181, 55, 242, 0.8);
+}

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Glowing Memory Vault</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,500&family=Outfit:wght@100;300&family=Playfair+Display:wght@700&display=swap');
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        /* 1. DYNAMIC NEBULA BACKGROUND */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .nebula {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background: 
+                radial-gradient(circle at 15% 25%, rgba(80, 30, 120, 0.3) 0%, transparent 55%),
+                radial-gradient(circle at 85% 75%, rgba(30, 60, 150, 0.3) 0%, transparent 55%);
+            filter: blur(100px);
+            opacity: 0.7;
+            animation: nebula-float 30s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes nebula-float {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1.4) rotate(8deg); }
+        }
+
+        .vignette {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.98) 100%);
+            z-index: 50; pointer-events: none; 
+        }
+
+        .grain {
+            position: fixed; inset: 0;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Stop_Sign_and_Noise.png');
+            opacity: 0.04; z-index: 60; pointer-events: none;
+            animation: grain-shift 0.1s steps(2) infinite;
+        }
+
+        @keyframes grain-shift {
+            0% { transform: translate(0,0); }
+            100% { transform: translate(1%, 1%); }
+        }
+
+        /* 2. REFINED START BUTTON */
+        #start-box {
+            position: absolute;
+            z-index: 1000; 
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            transition: opacity 1s ease;
+        }
+
+        #start-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 22px 60px;
+            font-size: 13px;
+            letter-spacing: 0.6em;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+        }
+
+        #start-btn:hover {
+            border-color: #fff;
+            background: rgba(255,255,255,0.1);
+            letter-spacing: 0.8em;
+            box-shadow: 0 0 50px rgba(255,255,255,0.15);
+        }
+
+        /* 3. AESTHETIC INTRO TEXT */
+        .intro-text {
+            position: absolute; 
+            left: 50%; top: 50%;
+            transform: translate(-50%, -40%);
+            width: 85vw;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 2.8rem;
+            opacity: 0;
+            transition: opacity 2s ease, transform 3.5s ease;
+            z-index: 80;
+            pointer-events: none;
+        }
+
+        .active-text { opacity: 1; transform: translate(-50%, -50%); }
+
+        /* 4. BIRTHDAY FINAL TEXT */
+        #birthday-text {
+            position: absolute;
+            z-index: 2000;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.3);
+            opacity: 0;
+            transition: all 3s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
+            letter-spacing: 5px;
+        }
+
+        #birthday-text.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 5. POLAROID GALLERY */
+        #gallery {
+            position: absolute;
+            width: 100vw; height: 100vh;
+            display: none;
+            z-index: 20;
+        }
+
+        .polaroid {
+            position: absolute;
+            left: 50%; top: 50%;
+            background: #fff;
+            padding: 15px 15px 75px 15px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(5) rotate(45deg);
+            transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, filter 5s ease;
+            will-change: transform, opacity;
+        }
+
+        .polaroid.new {
+            opacity: 1;
+            transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) rotate(var(--tr)) scale(1);
+        }
+
+        .polaroid.old {
+            filter: brightness(0.2) blur(8px) grayscale(0.4);
+        }
+
+        .polaroid img {
+            width: 320px; height: 380px;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        #flash {
+            position: fixed; inset: 0;
+            background: white;
+            opacity: 0;
+            z-index: 70;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div id="flash"></div>
+    <div class="nebula"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+
+    <div id="start-box">
+        <button id="start-btn">Begin Journey</button>
+    </div>
+
+    <div id="intro-container">
+        <div class="intro-text" id="t1">Let’s rewind the best moments…</div>
+        <div class="intro-text" id="t2">Because some moments are worth reliving.</div>
+        <div class="intro-text" id="t3">What better way to remember these moments...</div>
+        <div class="intro-text" id="t4">Than with your favorite song?</div>
+    </div>
+
+    <div id="gallery"></div>
+    <div id="birthday-text">HAPPY BIRTHDAYYYY SARMADI <3333</div>
+
+    <audio id="bg-music" src="song.mp3"></audio>
+
+    <script>
+        const images = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg"];
+        const MUSIC_WAIT_TIME = 5000; 
+
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        const flash = document.getElementById('flash');
+        let stars = [];
+        let fireworks = [];
+        let mouse = { x: 0, y: 0 };
+        let zCounter = 100;
+        let isFireworksActive = false;
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<180; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    opacity: Math.random(),
+                    speed: Math.random() * 0.02,
+                });
+            }
+        }
+
+        class FireworkParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * (Math.random() * 10),
+                    y: (Math.random() - 0.5) * (Math.random() * 10)
+                };
+                this.alpha = 1;
+                this.friction = 0.95;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.velocity.x *= this.friction;
+                this.velocity.y *= this.friction;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        function animateCanvas() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(s => {
+                s.opacity += (Math.random() - 0.5) * 0.03;
+                if(s.opacity < 0.1) s.opacity = 0.1;
+                if(s.opacity > 1) s.opacity = 1;
+
+                let dx = (mouse.x - canvas.width/2) * 0.02;
+                let dy = (mouse.y - canvas.height/2) * 0.02;
+
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+                ctx.beginPath();
+                ctx.arc(s.x + dx, s.y + dy, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            if (isFireworksActive) {
+                fireworks.forEach((particle, i) => {
+                    if (particle.alpha > 0) {
+                        particle.update();
+                        particle.draw();
+                    } else {
+                        fireworks.splice(i, 1);
+                    }
+                });
+                if (Math.random() < 0.05) createFirework();
+            }
+
+            requestAnimationFrame(animateCanvas);
+        }
+
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height * 0.5;
+            const colors = ['#ffd700', '#ff0044', '#00ffcc', '#ffffff', '#ff8800'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < 40; i++) {
+                fireworks.push(new FireworkParticle(x, y, color));
+            }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animateCanvas();
+
+        const startBtn = document.getElementById('start-btn');
+        const music = document.getElementById('bg-music');
+
+        startBtn.addEventListener('click', async () => {
+            document.getElementById('start-box').style.opacity = '0';
+            setTimeout(() => document.getElementById('start-box').remove(), 1000);
+            
+            await showText('t1');
+            await showText('t2');
+            await showText('t3');
+            await showText('t4');
+
+            music.play();
+            await new Promise(r => setTimeout(r, MUSIC_WAIT_TIME));
+
+            document.getElementById('gallery').style.display = 'block';
+            startMemoryPile();
+        });
+
+        async function showText(id) {
+            const el = document.getElementById(id);
+            el.classList.add('active-text');
+            await new Promise(r => setTimeout(r, 3800));
+            el.classList.remove('active-text');
+            await new Promise(r => setTimeout(r, 1200));
+        }
+
+        function triggerFlash() {
+            flash.style.transition = 'none';
+            flash.style.opacity = '0.3';
+            setTimeout(() => {
+                flash.style.transition = 'opacity 1s ease';
+                flash.style.opacity = '0';
+            }, 50);
+        }
+
+        async function startMemoryPile() {
+            for (let i = 0; i < images.length; i++) {
+                document.querySelectorAll('.polaroid').forEach(p => p.classList.add('old'));
+                const pol = document.createElement('div');
+                pol.className = 'polaroid';
+                zCounter++;
+                pol.style.zIndex = zCounter;
+                
+                const tx = (Math.random() * 54 - 27) + 'vw';
+                const ty = (Math.random() * 44 - 22) + 'vh';
+                const tr = (Math.random() * 34 - 17) + 'deg';
+                
+                pol.style.setProperty('--tx', tx);
+                pol.style.setProperty('--ty', ty);
+                pol.style.setProperty('--tr', tr);
+
+                const img = document.createElement('img');
+                img.src = images[i];
+                pol.appendChild(img);
+                document.getElementById('gallery').appendChild(pol);
+
+                triggerFlash();
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        pol.classList.add('new');
+                    });
+                });
+                await new Promise(r => setTimeout(r, 4500));
+            }
+            
+            // Final sequence
+            setTimeout(() => {
+                // Fade out photos
+                document.getElementById('gallery').style.transition = "opacity 3s ease";
+                document.getElementById('gallery').style.opacity = "0";
+                
+                // Start Fireworks and Show Birthday Text
+                setTimeout(() => {
+                    isFireworksActive = true;
+                    document.getElementById('birthday-text').classList.add('show');
+                }, 2000);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
